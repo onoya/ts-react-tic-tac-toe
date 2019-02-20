@@ -39,6 +39,11 @@ class Board extends Component<WithStyles<typeof styles>, State> {
     const { board, player } = this.state;
     const newBoard = [...board];
 
+    // Prevent it from updating the cell when it is not null
+    if (board[index] !== null) {
+      return;
+    }
+
     newBoard[index] = player;
 
     this.setState(prevState => ({
