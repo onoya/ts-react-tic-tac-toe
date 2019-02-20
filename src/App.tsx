@@ -1,13 +1,13 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import Board from './components/Board';
 
 class App extends Component {
   render() {
     return (
-      <div>
+      <Fragment>
         <h1>Tic-Tac-Toe</h1>
         <Board />
-      </div>
+      </Fragment>
     );
   }
 }
