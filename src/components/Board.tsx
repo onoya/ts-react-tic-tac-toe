@@ -51,6 +51,11 @@ class Board extends Component<WithStyles<typeof styles>, State> {
             </h2>
           </div>
         )}
+        <div className={classes.controls}>
+          <button className={classes.button} onClick={this.handleReset}>
+            Reset
+          </button>
+        </div>
       </Fragment>
     );
   }
@@ -83,6 +88,13 @@ class Board extends Component<WithStyles<typeof styles>, State> {
     }
     return null;
   };
+
+  private handleReset = () =>
+    this.setState({
+      winner: null,
+      player: Player.One,
+      board: Array(9).fill(null),
+    });
 }
 
 const styles = {
@@ -97,6 +109,19 @@ const styles = {
     margin: '0 auto',
     width: '70%',
     textAlign: 'center',
+  },
+  controls: {
+    display: 'flex',
+    justifyContent: 'center',
+    marginTop: '1rem',
+  },
+  button: {
+    padding: '1rem 2rem',
+    fontSize: '1rem',
+    border: '2px solid #000',
+    backgroundColor: '#ccc',
+    cursor: 'pointer',
+    outline: 'none',
   },
 };
 
