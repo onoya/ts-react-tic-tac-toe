@@ -4,7 +4,7 @@ import { Player } from './Board';
 
 interface Props extends WithStyles<typeof styles> {
   cell: Player | null;
-  onClick: () => any;
+  onClick: () => void;
 }
 
 const Cell: FC<Props> = ({ classes, cell, onClick }) => (
