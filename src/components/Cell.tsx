@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import withStyles, { WithStyles } from 'react-jss';
-import { Player } from './Board';
+import { Player } from '../contexts/GameContext';
 
 interface Props extends WithStyles<typeof styles> {
   cell: Player | null;

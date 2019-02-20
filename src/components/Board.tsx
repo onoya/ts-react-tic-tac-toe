@@ -1,106 +1,29 @@
 import React, { Component, Fragment } from 'react';
-import Cell from './Cell';
 import withStyles, { WithStyles } from 'react-jss';
+import GameContext, { Player } from '../contexts/GameContext';
+import Cell from './Cell';
 
-const WINNING_LINES = [
-  [0, 1, 2],
-  [3, 4, 5],
-  [6, 7, 8],
-  [0, 3, 6],
-  [1, 4, 7],
-  [2, 5, 8],
-  [0, 4, 8],
-  [2, 4, 6],
-];
-
-export enum Player {
-  One,
-  Two,
-}
-
-type GameBoard = Array<Player | null>;
-
-interface State {
-  board: GameBoard;
-  player: Player;
-  winner: Player | null;
-  isDraw: boolean;
-}
-
-class Board extends Component<WithStyles<typeof styles>, State> {
-  public state: State = {
-    board: Array(9).fill(null),
-    player: Player.One,
-    winner: null,
-    isDraw: false,
-  };
+class Board extends Component<WithStyles<typeof styles>> {
+  public static contextType = GameContext;
 
   public render() {
-    const { board, winner, isDraw } = this.state;
+    const { board } = this.context;
     const { classes } = this.props;
 
     return (
       <Fragment>
         <div className={classes.board}>
-          {board.map((cell, i) => (
-            <Cell key={i} cell={cell} onClick={this.handleCellClick(i)} />
+          {board.map((cell: Player, i: number) => (
+            <Cell
+              key={i}
+              cell={cell}
+              onClick={this.context.handleCellClick(i)}
+            />
           ))}
-        </div>
-        {(winner !== null || isDraw) && (
-          <div className={classes.winner}>
-            <h2>
-              {winner !== null
-                ? `Player ${winner === Player.One ? 'X' : 'O'} won!`
-                : "It's a Draw!"}
-            </h2>
-          </div>
-        )}
-        <div className={classes.controls}>
-          <button className={classes.button} onClick={this.handleReset}>
-            Reset
-          </button>
         </div>
       </Fragment>
     );
   }
-
-  private handleCellClick = (index: number) => () => {
-    const { board, player, winner } = this.state;
-    const newBoard = [...board];
-
-    // Prevent it from updating the cell when it is not null,
-    // or when there is already a winner
-    if (board[index] !== null || winner !== null) {
-      return;
-    }
-
-    newBoard[index] = player;
-
-    this.setState(prevState => ({
-      board: newBoard,
-      player: prevState.player === Player.One ? Player.Two : Player.One,
-      winner: this.getWinner(newBoard),
-      isDraw: newBoard.every(value => value !== null),
-    }));
-  };
-
-  private getWinner = (board: GameBoard) => {
-    for (let index = 0; index < WINNING_LINES.length; index++) {
-      const [a, b, c] = WINNING_LINES[index];
-      if (board[a] !== null && board[a] === board[b] && board[a] === board[c]) {
-        return this.state.player;
-      }
-    }
-    return null;
-  };
-
-  private handleReset = () =>
-    this.setState({
-      winner: null,
-      player: Player.One,
-      board: Array(9).fill(null),
-      isDraw: false,
-    });
 }
 
 const styles = {
@@ -110,24 +33,6 @@ const styles = {
     flexWrap: 'wrap',
     justifyContent: 'center',
     width: '330px',
-  },
-  winner: {
-    margin: '0 auto',
-    width: '70%',
-    textAlign: 'center',
-  },
-  controls: {
-    display: 'flex',
-    justifyContent: 'center',
-    marginTop: '1rem',
-  },
-  button: {
-    padding: '1rem 2rem',
-    fontSize: '1rem',
-    border: '2px solid #000',
-    backgroundColor: '#ccc',
-    cursor: 'pointer',
-    outline: 'none',
   },
 };
 
