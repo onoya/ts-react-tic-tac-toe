@@ -24,6 +24,7 @@ interface State {
   board: GameBoard;
   player: Player;
   winner: Player | null;
+  isDraw: boolean;
 }
 
 class Board extends Component<WithStyles<typeof styles>, State> {
@@ -31,10 +32,11 @@ class Board extends Component<WithStyles<typeof styles>, State> {
     board: Array(9).fill(null),
     player: Player.One,
     winner: null,
+    isDraw: false,
   };
 
   public render() {
-    const { board, winner } = this.state;
+    const { board, winner, isDraw } = this.state;
     const { classes } = this.props;
 
     return (
@@ -44,10 +46,12 @@ class Board extends Component<WithStyles<typeof styles>, State> {
             <Cell key={i} cell={cell} onClick={this.handleCellClick(i)} />
           ))}
         </div>
-        {winner !== null && (
+        {(winner !== null || isDraw) && (
           <div className={classes.winner}>
             <h2>
-              {winner !== null ? `Player ${winner} won!` : "It's a Draw!"}
+              {winner !== null
+                ? `Player ${winner === Player.One ? 'X' : 'O'} won!`
+                : "It's a Draw!"}
             </h2>
           </div>
         )}
@@ -76,6 +80,7 @@ class Board extends Component<WithStyles<typeof styles>, State> {
       board: newBoard,
       player: prevState.player === Player.One ? Player.Two : Player.One,
       winner: this.getWinner(newBoard),
+      isDraw: newBoard.every(value => value !== null),
     }));
   };
 
@@ -94,6 +99,7 @@ class Board extends Component<WithStyles<typeof styles>, State> {
       winner: null,
       player: Player.One,
       board: Array(9).fill(null),
+      isDraw: false,
     });
 }
 
