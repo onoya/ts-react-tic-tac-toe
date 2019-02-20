@@ -1,15 +1,22 @@
-import React, { Component, Fragment } from 'react';
+import React, { Fragment, FC } from 'react';
+import withStyles, { WithStyles } from 'react-jss';
 import Board from './components/Board';
 
-class App extends Component {
-  render() {
-    return (
-      <Fragment>
-        <h1>Tic-Tac-Toe</h1>
-        <Board />
-      </Fragment>
-    );
-  }
-}
+const App: FC<WithStyles<typeof styles>> = ({ classes }) => (
+  <Fragment>
+    <h1 className={classes.title}>Tic-Tac-Toe</h1>
+    <Board />
+  </Fragment>
+);
 
-export default App;
+const styles = {
+  '@global body': {
+    backgroundColor: '#dedede',
+  },
+  title: {
+    textAlign: 'center',
+    textDecoration: 'underline',
+  },
+};
+
+export default withStyles(styles)(App);
