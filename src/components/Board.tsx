@@ -1,26 +1,51 @@
 import React, { Component, Fragment } from 'react';
-import Cell from './Box';
+import Cell from './Cell';
 import withStyles, { WithStyles } from 'react-jss';
 
-class Board extends Component<WithStyles<typeof styles>> {
-  state = {
+export enum Player {
+  One,
+  Two,
+}
+
+type GameBoard = Array<Player | null>;
+
+interface State {
+  board: GameBoard;
+  player: Player;
+}
+
+class Board extends Component<WithStyles<typeof styles>, State> {
+  public state: State = {
     board: Array(9).fill(null),
+    player: Player.One,
   };
 
-  render() {
+  public render() {
     const { board } = this.state;
     const { classes } = this.props;
 
     return (
       <Fragment>
         <div className={classes.board}>
-          {board.map((player, i) => (
-            <Cell key={i} />
+          {board.map((cell, i) => (
+            <Cell key={i} cell={cell} onClick={this.handleCellClick(i)} />
           ))}
         </div>
       </Fragment>
     );
   }
+
+  private handleCellClick = (index: number) => () => {
+    const { board, player } = this.state;
+    const newBoard = [...board];
+
+    newBoard[index] = player;
+
+    this.setState(prevState => ({
+      board: newBoard,
+      player: prevState.player === Player.One ? Player.Two : Player.One,
+    }));
+  };
 }
 
 const styles = {
