@@ -18,32 +18,35 @@ export enum Player {
 
 type GameBoard = Array<Player | null>;
 
-interface IGameContext {
+interface IState {
   board: GameBoard;
   player: Player;
   winner: Player | null;
   isDraw: boolean;
-  handleCellClick: (index: number) => void;
+}
+
+interface IGameContext extends IState {
+  handleCellClick: (index: number) => () => void;
   handleReset: () => void;
   getWinner: (board: GameBoard) => Player | null;
 }
 
-interface State {
-  board: GameBoard;
-  player: Player;
-  winner: Player | null;
-  isDraw: boolean;
-}
+const initialState: IState = {
+  board: Array(9).fill(null),
+  player: Player.One,
+  winner: null,
+  isDraw: false,
+};
 
-const GameContext = createContext<IGameContext | null>(null);
+const GameContext = createContext<IGameContext>({
+  ...initialState,
+  handleCellClick: () => () => {},
+  getWinner: () => null,
+  handleReset: () => {},
+});
 
-export class GameProvider extends Component<{}, State> {
-  public readonly state: State = {
-    board: Array(9).fill(null),
-    player: Player.One,
-    winner: null,
-    isDraw: false,
-  };
+export class GameProvider extends Component<{}, IState> {
+  public readonly state: IState = initialState;
 
   public render() {
     const { board, player, winner, isDraw } = this.state;
@@ -95,13 +98,7 @@ export class GameProvider extends Component<{}, State> {
     return null;
   };
 
-  private handleReset = () =>
-    this.setState({
-      winner: null,
-      player: Player.One,
-      board: Array(9).fill(null),
-      isDraw: false,
-    });
+  private handleReset = () => this.setState(initialState);
 }
 
 export const GameConsumer = GameContext.Consumer;

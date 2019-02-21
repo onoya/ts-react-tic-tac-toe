@@ -1,30 +1,18 @@
-import React, { Component, Fragment } from 'react';
+import React, { FC, useContext } from 'react';
 import withStyles, { WithStyles } from 'react-jss';
-import GameContext, { Player } from '../contexts/GameContext';
+import GameContext from '../contexts/GameContext';
 import Cell from './Cell';
 
-class Board extends Component<WithStyles<typeof styles>> {
-  public static contextType = GameContext;
-
-  public render() {
-    const { board } = this.context;
-    const { classes } = this.props;
-
-    return (
-      <Fragment>
-        <div className={classes.board}>
-          {board.map((cell: Player, i: number) => (
-            <Cell
-              key={i}
-              cell={cell}
-              onClick={this.context.handleCellClick(i)}
-            />
-          ))}
-        </div>
-      </Fragment>
-    );
-  }
-}
+const Board: FC<WithStyles<typeof styles>> = ({ classes }) => {
+  const { board, handleCellClick } = useContext(GameContext);
+  return (
+    <div className={classes.board}>
+      {board.map((cell, i) => (
+        <Cell key={i} cell={cell} onClick={handleCellClick(i)} />
+      ))}
+    </div>
+  );
+};
 
 const styles = {
   board: {
