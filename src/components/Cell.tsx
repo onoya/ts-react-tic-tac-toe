@@ -2,12 +2,12 @@ import React, { FC } from 'react';
 import withStyles, { WithStyles } from 'react-jss';
 import { Player } from '../contexts/GameContext';
 
-interface IProps extends WithStyles<typeof styles> {
+interface Props extends WithStyles<typeof styles> {
   cell: Player | null;
   onClick: () => void;
 }
 
-const Cell: FC<IProps> = ({ classes, cell, onClick }) => (
+const Cell: FC<Props> = ({ classes, cell, onClick }) => (
   <div className={classes.cell} onClick={onClick}>
     {cell !== null && (cell === Player.One ? 'X' : 'O')}
   </div>

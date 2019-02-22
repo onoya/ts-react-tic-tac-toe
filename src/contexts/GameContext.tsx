@@ -1,4 +1,4 @@
-import React, { Component, createContext } from 'react';
+import React, { createContext, FC, useReducer } from 'react';
 
 const WINNING_LINES = [
   [0, 1, 2],
@@ -18,88 +18,93 @@ export enum Player {
 
 type GameBoard = Array<Player | null>;
 
-interface IState {
+type Action =
+  | { type: 'UPDATE_BOARD' | 'RESET'; index: number }
+  | { type: 'RESET' };
+
+interface State {
   board: GameBoard;
   player: Player;
   winner: Player | null;
   isDraw: boolean;
 }
 
-interface IGameContext extends IState {
+interface GameContextProps extends State {
   handleCellClick: (index: number) => () => void;
   handleReset: () => void;
-  getWinner: (board: GameBoard) => Player | null;
 }
 
-const initialState: IState = {
+const initialState: State = {
   board: Array(9).fill(null),
   player: Player.One,
   winner: null,
   isDraw: false,
 };
 
-const GameContext = createContext<IGameContext>({
+const GameContext = createContext<GameContextProps>({
   ...initialState,
   handleCellClick: () => () => {},
-  getWinner: () => null,
   handleReset: () => {},
 });
 
-export class GameProvider extends Component<{}, IState> {
-  public readonly state: IState = initialState;
-
-  public render() {
-    const { board, player, winner, isDraw } = this.state;
-
-    return (
-      <GameContext.Provider
-        value={{
-          board,
-          player,
-          winner,
-          isDraw,
-          handleCellClick: this.handleCellClick,
-          getWinner: this.getWinner,
-          handleReset: this.handleReset,
-        }}
-      >
-        {this.props.children}
-      </GameContext.Provider>
-    );
+const getWinner = (board: GameBoard, player: Player) => {
+  for (let index = 0; index < WINNING_LINES.length; index++) {
+    const [a, b, c] = WINNING_LINES[index];
+    if (board[a] !== null && board[a] === board[b] && board[a] === board[c]) {
+      return player;
+    }
   }
+  return null;
+};
 
-  private handleCellClick = (index: number) => () => {
-    const { board, player, winner } = this.state;
-    const newBoard = [...board];
+const reducer = (state: State, action: Action): State => {
+  switch (action.type) {
+    case 'UPDATE_BOARD':
+      const newBoard = [...state.board];
 
-    // Prevent it from updating the cell when it is not null,
-    // or when there is already a winner
-    if (board[index] !== null || winner !== null) {
-      return;
-    }
-
-    newBoard[index] = player;
-
-    this.setState(prevState => ({
-      board: newBoard,
-      player: prevState.player === Player.One ? Player.Two : Player.One,
-      winner: this.getWinner(newBoard),
-      isDraw: newBoard.every(value => value !== null),
-    }));
-  };
-
-  private getWinner = (board: GameBoard) => {
-    for (let index = 0; index < WINNING_LINES.length; index++) {
-      const [a, b, c] = WINNING_LINES[index];
-      if (board[a] !== null && board[a] === board[b] && board[a] === board[c]) {
-        return this.state.player;
+      // Prevent it from updating the cell when it is not null,
+      // or when there is already a winner
+      if (state.board[action.index] !== null || state.winner !== null) {
+        return state;
       }
-    }
-    return null;
-  };
 
-  private handleReset = () => this.setState(initialState);
-}
+      newBoard[action.index] = state.player;
+      return {
+        ...state,
+        board: newBoard,
+        player: state.player === Player.One ? Player.Two : Player.One,
+        winner: getWinner(newBoard, state.player),
+        isDraw: newBoard.every(value => value !== null),
+      };
+    case 'RESET':
+      return initialState;
+    default:
+      return state;
+  }
+};
+
+export const GameProvider: FC = ({ children }) => {
+  const [{ board, player, winner, isDraw }, dispatch] = useReducer(
+    reducer,
+    initialState
+  );
+
+  return (
+    <GameContext.Provider
+      value={{
+        board,
+        player,
+        winner,
+        isDraw,
+        handleCellClick: (index: number) => () =>
+          dispatch({ type: 'UPDATE_BOARD', index }),
+        handleReset: () => dispatch({ type: 'RESET' }),
+      }}
+    >
+      {children}
+    </GameContext.Provider>
+  );
+};
 
 export const GameConsumer = GameContext.Consumer;
 
