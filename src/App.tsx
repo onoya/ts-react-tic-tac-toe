@@ -1,31 +1,32 @@
-import React, { FC, Fragment, useContext } from 'react';
+import React, { FC, Fragment } from 'react';
 import withStyles, { WithStyles } from 'react-jss';
 import Board from './components/Board';
-import GameContext, { Player } from './contexts/GameContext';
+import { GameConsumer, Player } from './contexts/GameContext';
 
-const App: FC<WithStyles<typeof styles>> = ({ classes }) => {
-  const { winner, isDraw, handleReset } = useContext(GameContext);
-  return (
-    <Fragment>
-      <h1 className={classes.title}>Tic-Tac-Toe</h1>
-      <Board />
-      {(winner !== null || isDraw) && (
-        <div className={classes.winner}>
-          <h2>
-            {winner !== null
-              ? `Player ${winner === Player.One ? 'X' : 'O'} won!`
-              : "It's a Draw!"}
-          </h2>
+const App: FC<WithStyles<typeof styles>> = ({ classes }) => (
+  <GameConsumer>
+    {({ winner, isDraw, handleReset }) => (
+      <Fragment>
+        <h1 className={classes.title}>Tic-Tac-Toe</h1>
+        <Board />
+        {(winner !== null || isDraw) && (
+          <div className={classes.winner}>
+            <h2>
+              {winner !== null
+                ? `Player ${winner === Player.One ? 'X' : 'O'} won!`
+                : "It's a Draw!"}
+            </h2>
+          </div>
+        )}
+        <div className={classes.controls}>
+          <button className={classes.button} onClick={handleReset}>
+            Reset
+          </button>
         </div>
-      )}
-      <div className={classes.controls}>
-        <button className={classes.button} onClick={handleReset}>
-          Reset
-        </button>
-      </div>
-    </Fragment>
-  );
-};
+      </Fragment>
+    )}
+  </GameConsumer>
+);
 
 const styles = {
   '@global body': {

@@ -1,18 +1,19 @@
-import React, { FC, useContext } from 'react';
+import React, { FC } from 'react';
 import withStyles, { WithStyles } from 'react-jss';
-import GameContext from '../contexts/GameContext';
+import { GameConsumer } from '../contexts/GameContext';
 import Cell from './Cell';
 
-const Board: FC<WithStyles<typeof styles>> = ({ classes }) => {
-  const { board, handleCellClick } = useContext(GameContext);
-  return (
-    <div className={classes.board}>
-      {board.map((cell, i) => (
-        <Cell key={i} cell={cell} onClick={handleCellClick(i)} />
-      ))}
-    </div>
-  );
-};
+const Board: FC<WithStyles<typeof styles>> = ({ classes }) => (
+  <GameConsumer>
+    {({ board, handleCellClick }) => (
+      <div className={classes.board}>
+        {board.map((cell, i) => (
+          <Cell key={i} cell={cell} onClick={handleCellClick(i)} />
+        ))}
+      </div>
+    )}
+  </GameConsumer>
+);
 
 const styles = {
   board: {
