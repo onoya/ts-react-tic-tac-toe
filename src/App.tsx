@@ -29,6 +29,9 @@ const App: FC<WithStyles<typeof styles>> = ({ classes }) => (
 );
 
 const styles = {
+  '@global *': {
+    fontFamily: ['Roboto', 'sans-serif']
+  },
   '@global body': {
     backgroundColor: '#dedede',
   },
@@ -47,7 +50,7 @@ const styles = {
     marginTop: '1rem',
   },
   button: {
-    padding: '1rem 2rem',
+    padding: '.7rem 2rem',
     fontSize: '1rem',
     border: '2px solid #000',
     backgroundColor: '#ccc',

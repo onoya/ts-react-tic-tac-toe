@@ -18,9 +18,10 @@ const Board: FC<WithStyles<typeof styles>> = ({ classes }) => (
 const styles = {
   board: {
     margin: '0 auto',
-    display: 'flex',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
+    display: 'grid',
+    gridTemplate: 'repeat(3, 1fr) / repeat(3, 1fr)',
+    border: '3px solid black',
+    borderRadius: '5px',
     width: '330px',
   },
 };

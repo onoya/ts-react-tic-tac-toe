@@ -22,6 +22,8 @@ const styles = {
     width: '100px',
     height: '100px',
     cursor: 'pointer',
+    fontFamily: ['Fredoka One', 'cursive'],
+    fontSize: '4rem',
   },
 };
 
